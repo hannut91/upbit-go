@@ -1,4 +1,4 @@
-package client
+package upbit_go
 
 import (
 	"strconv"

@@ -1,23 +1,23 @@
-#Upbit-Go
+# Upbit-Go
 
 A Golang SDK for Upbit API
 
 Upbit full document is [here](https://docs.upbit.com/).
 
-###Installation
-```
+### Installation
+```bash
 go get github.com/hannut91/upbit-go
 ```
 
 ## Getting started
 
-```
+```go
 package main
 
 import (
     "fmt"
     
-    "github.com/hannut91/upbit-go"
+    "github.com/hannut91/upbit-go/client"
 )
 
 func main() {
