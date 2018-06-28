@@ -15,20 +15,20 @@ go get github.com/hannut91/upbit-go
 package main
 
 import (
-    "fmt"
-    
-    "github.com/hannut91/upbit-go/client"
+	"fmt"
+
+	"github.com/hannut91/upbit-go"
 )
 
 func main() {
-    client := client.NewClient()
-    
-    markets, err := client.Markets()
-    if err != nil {
-        fmt.Println(err)
-    }
+	client := upbit_go.NewClient()
 
-    fmt.Println(markets[0].Market) // KRW-BTC
+	markets, err := client.Markets()
+	if err != nil {
+	    return
+	}
+
+	fmt.Println(markets[0].Market) // KRW-BTC
 }
 
 ```
