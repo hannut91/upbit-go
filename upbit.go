@@ -1,10 +1,13 @@
-package upbit_go
+package upbit
 
 import (
+	"net/url"
 	"strconv"
 
-	"upbit-go/types"
-	"upbit-go/util"
+	"github.com/dgrijalva/jwt-go"
+
+	"github.com/hannut91/upbit-go/types"
+	"github.com/hannut91/upbit-go/util"
 )
 
 const (
@@ -21,6 +24,38 @@ func (e *InvalidParams) Error() string {
 }
 
 type Client struct {
+	accessKey string
+	secretKey string
+}
+
+func (client *Client) Token(query map[string]string) (tokenStr string, err error) {
+	claim := jwt.MapClaims{
+		"access_key": client.accessKey,
+		"nonce":      util.TimeStamp(),
+	}
+
+	if query != nil {
+		url := new(url.URL)
+
+		q := url.Query()
+
+		for i, value := range query {
+			q.Add(i, value)
+		}
+
+		rawQuery := q.Encode()
+
+		claim["query"] = rawQuery
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)
+
+	tokenStr, err = token.SignedString([]byte(client.secretKey[:]))
+	if err != nil {
+		return
+	}
+
+	return
 }
 
 func (client *Client) Markets() (markets []*types.Market, err error) {
@@ -187,8 +222,47 @@ func (client *Client) Orderbooks(
 	return
 }
 
-func NewClient() *Client {
-	return new(Client)
+func (client *Client) Accounts() (balances []*types.Balance, err error) {
+	token, err := client.Token(nil)
+	if err != nil {
+		return
+	}
+
+	options := &util.RequestOptions{
+		Url: baseUrl + "/accounts",
+		Headers: map[string]string{
+			"Authorization": "Bearer " + token,
+		},
+	}
+	err = util.Request(options, &balances)
+	return
+}
+
+func (client *Client) OrderChance(
+	marketId string,
+) (orderChance types.OrderChance, err error) {
+	query := map[string]string{
+		"market": marketId,
+	}
+
+	token, err := client.Token(query)
+	if err != nil {
+		return
+	}
+
+	options := &util.RequestOptions{
+		Url: baseUrl + "/orders/chance",
+		Headers: map[string]string{
+			"Authorization": "Bearer " + token,
+		},
+		Query: query,
+	}
+	err = util.Request(options, &orderChance)
+	return
+}
+
+func NewClient(accessKey, secretKey string) *Client {
+	return &Client{accessKey, secretKey}
 }
 
 func isValidMinuteCandleUnit(unit int) bool {

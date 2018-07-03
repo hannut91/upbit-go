@@ -21,7 +21,7 @@ import (
 )
 
 func main() {
-	client := upbit_go.NewClient()
+	client := upbit.NewClient("YourAccessKey", "YourSecretKey")
 
 	markets, err := client.Markets()
 	if err != nil {
@@ -30,5 +30,4 @@ func main() {
 
 	fmt.Println(markets[0].Market) // KRW-BTC
 }
-
 ```

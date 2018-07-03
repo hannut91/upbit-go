@@ -1,4 +1,4 @@
-package upbit_go
+package upbit
 
 import (
 	"fmt"
@@ -7,8 +7,13 @@ import (
 
 var client *Client
 
+const (
+	accessKey = ""
+	secretKey = ""
+)
+
 func setUp() {
-	client = NewClient()
+	client = NewClient(accessKey, secretKey)
 }
 
 func ExampleGetMarkets() {
@@ -158,4 +163,32 @@ func ExampleOrderbooks() {
 	// 2
 	// KRW-BTC KRW-TRX
 	// 10
+}
+
+func ExampleAccounts() {
+	setUp()
+
+	accounts, err := client.Accounts()
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	fmt.Println(accounts[0].Currency)
+
+	// Output:
+	// KRW
+}
+
+func ExampleOrderChange() {
+	setUp()
+
+	orderChance, err := client.OrderChance("KRW-BTC")
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	fmt.Println(orderChance.Market.Id)
+
+	// Output:
+	// KRW-BTC
 }
