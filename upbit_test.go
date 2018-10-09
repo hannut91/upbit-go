@@ -192,3 +192,24 @@ func ExampleOrderChange() {
 	// Output:
 	// KRW-BTC
 }
+
+// func ExampleSell() {
+// 	setUp()
+//
+// 	order, err := client.Order(
+// 		strconv.Itoa(int(util.TimeStamp())),
+// 		"bid",
+// 		"BTC-TRX",
+// 		"0.000003",
+// 		"1000",
+// 		"limit",
+// 	)
+// 	if err != nil {
+// 		log.Panicln(err)
+// 	}
+//
+// 	fmt.Println(order)
+//
+// 	// Output:
+// 	// BTC-TRX
+// }

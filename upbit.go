@@ -261,6 +261,96 @@ func (client *Client) OrderChance(
 	return
 }
 
+func (client *Client) Orders(
+	market string,
+	state string,
+	page int,
+	orderBy string,
+) (orders []*types.Order, err error) {
+	query := map[string]string{
+		"market":   market,
+		"state":    state,
+		"page":     strconv.Itoa(page),
+		"order_by": orderBy,
+	}
+
+	token, err := client.Token(query)
+	if err != nil {
+		return
+	}
+
+	options := &util.RequestOptions{
+		Url: baseUrl + "/orders",
+		Headers: map[string]string{
+			"Authorization": "Bearer " + token,
+		},
+		Query: query,
+	}
+	err = util.Request(options, &orders)
+	return
+}
+
+func (client *Client) Order(
+	identifier string,
+	side string,
+	market string,
+	price string,
+	volume string,
+	ord_type string,
+) (order *types.Order, err error) {
+	query := map[string]string{
+		"market":     market,
+		"side":       side,
+		"volume":     volume,
+		"price":      price,
+		"ord_type":   ord_type,
+		"identifier": identifier,
+	}
+
+	token, err := client.Token(query)
+	if err != nil {
+		return
+	}
+
+	options := &util.RequestOptions{
+		Url:    baseUrl + "/orders",
+		Method: "POST",
+		Headers: map[string]string{
+			"Authorization": "Bearer " + token,
+		},
+		Query: query,
+	}
+
+	err = util.Request(options, &order)
+	return
+}
+
+func (client *Client) CancelOrder(
+	uuid string,
+) (order *types.Order, err error) {
+	query := map[string]string{
+		"uuid": uuid,
+	}
+
+	token, err := client.Token(query)
+	if err != nil {
+		return
+	}
+
+	options := &util.RequestOptions{
+		Url:    baseUrl + "/order",
+		Method: "DELETE",
+		Headers: map[string]string{
+			"Authorization": "Bearer " + token,
+			"Content-Type":  "application/json; charset=utf-8",
+		},
+		Query: query,
+	}
+
+	err = util.Request(options, &order)
+	return
+}
+
 func NewClient(accessKey, secretKey string) *Client {
 	return &Client{accessKey, secretKey}
 }
