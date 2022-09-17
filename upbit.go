@@ -359,11 +359,18 @@ func (client *Client) Withdraw(
 	transactionType string,
 ) (result *types.TransactionResult, err error) {
 	query := map[string]string{
-		"currency":          currency,
-		"amount":            amount,
-		"address":           address,
-		"secondary_address": secondaryAddress,
-		"transaction_type":  transactionType,
+		"currency":         currency,
+		"amount":           amount,
+		"address":          address,
+		"transaction_type": "default",
+	}
+
+	if len(secondaryAddress) != 0 {
+		query["secondary_address"] = secondaryAddress
+	}
+
+	if len(transactionType) != 0 {
+		query["transaction_type"] = transactionType
 	}
 
 	token, err := client.Token(query)
