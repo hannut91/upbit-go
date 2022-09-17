@@ -351,6 +351,39 @@ func (client *Client) CancelOrder(
 	return
 }
 
+func (client *Client) Withdraw(
+	currency string,
+	amount string,
+	address string,
+	secondaryAddress string,
+	transactionType string,
+) (result *types.TransactionResult, err error) {
+	query := map[string]string{
+		"currency":          currency,
+		"amount":            amount,
+		"address":           address,
+		"secondary_address": secondaryAddress,
+		"transaction_type":  transactionType,
+	}
+
+	token, err := client.Token(query)
+	if err != nil {
+		return
+	}
+
+	options := &util.RequestOptions{
+		Url:    baseUrl + "/withdraws/coin",
+		Method: "POST",
+		Headers: map[string]string{
+			"Authorization": "Bearer " + token,
+		},
+		Query: query,
+	}
+
+	err = util.Request(options, &result)
+	return
+}
+
 func NewClient(accessKey, secretKey string) *Client {
 	return &Client{accessKey, secretKey}
 }
