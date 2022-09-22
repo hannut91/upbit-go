@@ -58,3 +58,32 @@ func Request(options *RequestOptions, result interface{}) (
 	}
 	return
 }
+
+func RawRequest(options *RequestOptions) (
+	*http.Response,
+	error,
+) {
+	client := &http.Client{}
+
+	req, err := http.NewRequest(options.Method, options.Url, options.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	if options.Query != nil {
+		q := req.URL.Query()
+		for index, value := range options.Query {
+			q.Add(index, value)
+		}
+
+		req.URL.RawQuery = q.Encode()
+	}
+
+	if options.Headers != nil {
+		for prop, value := range options.Headers {
+			req.Header.Add(prop, value)
+		}
+	}
+
+	return client.Do(req)
+}

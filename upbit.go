@@ -1,6 +1,9 @@
 package upbit
 
 import (
+	"encoding/json"
+	"errors"
+	"io/ioutil"
 	"net/url"
 	"strconv"
 
@@ -387,8 +390,35 @@ func (client *Client) Withdraw(
 		Query: query,
 	}
 
-	err = util.Request(options, &result)
-	return
+	res, err := util.RawRequest(options)
+	if err != nil {
+		return nil, err
+	}
+
+	Body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return
+	}
+
+	defer res.Body.Close()
+
+	if res.StatusCode == "200" {
+		var result *types.TransactionResult
+		err = json.Unmarshal(Body, result)
+		if err != nil {
+			return nil, err
+		}
+
+		return result, nil
+	}
+
+	var responseError types.ResponseError
+	err = json.Unmarshal(Body, &responseError)
+	if err != nil {
+		return nil, err
+	}
+
+	return nil, errors.New(responseError.Error())
 }
 
 func NewClient(accessKey, secretKey string) *Client {
