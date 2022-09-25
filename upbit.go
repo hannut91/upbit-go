@@ -402,7 +402,7 @@ func (client *Client) Withdraw(
 
 	defer res.Body.Close()
 
-	if res.StatusCode == "200" {
+	if res.StatusCode == 200 {
 		var result *types.TransactionResult
 		err = json.Unmarshal(Body, result)
 		if err != nil {
