@@ -423,6 +423,22 @@ func (client *Client) Withdraw(
 	return nil, errors.New(responseError.Error())
 }
 
+func (client *Client) CoinAddresses() (addresses []*types.CoinAddress, err error) {
+	token, err := client.Token(nil)
+	if err != nil {
+		return
+	}
+
+	options := &util.RequestOptions{
+		Url: baseUrl + "/withdraws/coin_addresses",
+		Headers: map[string]string{
+			"Authorization": "Bearer " + token,
+		},
+	}
+	err = util.Request(options, &addresses)
+	return
+}
+
 func NewClient(accessKey, secretKey string) *Client {
 	return &Client{accessKey, secretKey}
 }
