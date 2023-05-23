@@ -359,12 +359,14 @@ func (client *Client) Withdraw(
 	amount string,
 	address string,
 	secondaryAddress string,
+	network string,
 	transactionType string,
 ) (result *types.TransactionResult, err error) {
 	query := map[string]string{
 		"currency":         currency,
 		"amount":           amount,
 		"address":          address,
+		"net_type":         network,
 		"transaction_type": "default",
 	}
 
